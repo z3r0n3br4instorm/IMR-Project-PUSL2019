@@ -17,6 +17,7 @@ class Interface:
         self.db = SystemDB('54.169.119.236', 'POS', 'sa', '0_v1ru51234')
         self.notLoggedIn = True
         self.resetBar = False
+        st.set_page_config(page_title="Frenzy Mart", layout="wide")
         # Check if the genRandomNo in the database
         with st.spinner("Generating a Customer ID for You..."):
             if 'customerID' not in st.session_state:
