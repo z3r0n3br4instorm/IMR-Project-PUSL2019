@@ -106,7 +106,7 @@ class Interface:
                     result = self.db.cursor(query)
                     st.write(result)
                 except Exception as e:
-                    st.error(f"An error occurred: {e}")
+                    st.error(f"An internal Error Occured !{e}")
         st.markdown("---")
         st.subheader("Admin Functions:")
         if st.button("Create Tables"):
@@ -175,13 +175,16 @@ class Interface:
             else:
                 if st.button("Login"):
                     # print(self.db.cursor(f"SELECT * FROM AdminUsers WHERE Username = '{uname}'"), uname, pword)
-                    data =  self.db.cursor(f"SELECT * FROM AdminUsers WHERE Username = '{uname}'")
-                    if uname == data[0][1] and pword == data[0][2]:
-                        st.session_state.customerID = 0
-                        st.query_params.update({"page": "admin"})
-                        self.adminInterface()
-                    else:
-                        st.error("Invalid credentials. Please try again.")
+                    try:
+                        data =  self.db.cursor(f"SELECT * FROM AdminUsers WHERE Username = '{uname}'")
+                        if uname == data[0][1] and pword == data[0][2]:
+                            st.session_state.customerID = 0
+                            st.query_params.update({"page": "admin"})
+                            self.adminInterface()
+                        else:
+                            st.error("Invalid credentials. Please try again.")
+                    except:
+                            st.error("Invalid credentials. Please try again.")
 
     def searchAndBuy(self):
         with self.placeholder.container():
@@ -414,7 +417,7 @@ class Interface:
                             with st.spinner("Initializing Interface..."):
                                 st.query_params.update({"page": "main"})
                         except Exception as e:
-                            st.error(f"An error occurred: {e}")
+                            st.error(f"Internal Error Occured ! Please Contact System Administrator !")
                 if st.button("Done"):
                     st.info("Press again to confirm...")
                     with st.spinner("Initializing Interface..."):
