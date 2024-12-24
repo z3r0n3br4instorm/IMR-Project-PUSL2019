@@ -286,8 +286,8 @@ class Interface:
                         st.rerun()
 
             with st.spinner("Waiting for Database..."):
-                st.subheader("Inventory Status")
-                inventory = self.db.cursor("SELECT P_Name, P_Qty FROM Product")
+                st.subheader("Prices")
+                inventory = self.db.cursor("SELECT P_Name, Price FROM Product")
                 self.displayBarChart(inventory)
 
             st.subheader(f"🛒 {len(st.session_state.cart)}")
