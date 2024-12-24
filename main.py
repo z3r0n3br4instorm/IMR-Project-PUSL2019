@@ -10,14 +10,13 @@ import datetime as dt
 from SystemFiles.DatabaseEngine import SystemDB
 import av
 import random
-
+st.set_page_config(page_title="Frenzy Mart", layout="wide")
 class Interface:
     def __init__(self):
         self.placeholder = st.empty()
         self.db = SystemDB('54.169.119.236', 'POS', 'sa', '0_v1ru51234')
         self.notLoggedIn = True
         self.resetBar = False
-        st.set_page_config(page_title="Frenzy Mart", layout="wide")
         # Check if the genRandomNo in the database
         with st.spinner("Generating a Customer ID for You..."):
             if 'customerID' not in st.session_state:
