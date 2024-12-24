@@ -217,7 +217,7 @@ class Interface:
                         st.query_params.update({"page": "barcodeScanner"})
                         st.rerun()
             with col6:
-                if st.button("💸 Proceed to pay"):
+                if st.button("💸 Pay"):
                     with st.spinner("Initializing Interface..."):
                         st.query_params.update({"page": "paymentProcessor"})
                         st.rerun()
