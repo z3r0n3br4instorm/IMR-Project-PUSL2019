@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from streamlit.elements.spinner import spinner
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
 import numpy.core.multiarray
 import cv2
@@ -21,7 +22,7 @@ class Interface:
         self.resetBar = False
         # Check if the genRandomNo in the database
         with st.spinner("Generating a Customer ID for You..."):
-            if 'customerID' not in st.session_state:
+            if 'customerID' not in st.session_state or st.session_state.customerID == None:
                 while True:
                     genRandomNo = random.randint(100000,1000000)
                     query = f"SELECT CustomerID FROM Customer WHERE CustomerID = {genRandomNo}"
@@ -126,8 +127,14 @@ class Interface:
 
 
     def login(self):
+        st.empty()
         with self.placeholder.container():
+            st.query_params.update({"page": "login"})
             st.title("Enter Your Data to Register to our system and get Discounts, Promotions and various other benifits...")
+            if st.button("Go to homepage"):
+                st.info("Press again to confirm...")
+                st.session_state.customerID = None
+                st.query_params.update({"page": "main"})
             uname = st.text_input("Your Name", key="name")
             email = st.text_input("Your Email", key="email")
             pno = st.text_input("Your Phone Number", key="phone")
@@ -154,9 +161,6 @@ class Interface:
                             self.db.cursor(query2)
                             st.success("User Saved!")
                             st.session_state.customerID = newID
-                            st.query_params.update({"page": "main"})
-                            # Refresh
-                            self.mainScreen()
                         else:
                             st.error("User Already Exists !")
 
@@ -342,7 +346,11 @@ class Interface:
             with st.spinner("Communicating with database..."):
                 cart_items = st.session_state.cart
                 if not cart_items:
-                    st.error("Your cart is empty!")
+                    if st.button("Sign up for our exclusive offers !"):
+                        st.query_params.update({"page": "login"})
+                        self.login()
+                    st.warning("Your cart is empty !")
+                    st.info("Go buy some stuff, you deserve it ! ;)")
                     return
 
                 item_ids = ', '.join(map(str, cart_items))
@@ -354,25 +362,34 @@ class Interface:
                 """
 
                 # Execute the query
-                results = self.db.cursor(query)
-                # Display results
-                st.subheader("Your cart items:")
-                print(item_qty)
-                for row in results:
-                    st.info(f"Item: {row[0]}, Price: {row[1]}, Quantity: {item_qty[row[2]]}")
-                for key, value in item_qty.items():
+                try:
+                    results = self.db.cursor(query)
+                    # Display results
+                    st.subheader("Your cart items:")
+                    print(item_qty)
                     for row in results:
-                        if key == row[2]:
-                            totalPrice += row[1] * value
-                st.subheader(f"Total Price : ${totalPrice}")
-                st.title("Enter Your Phone Number to continue...")
-                pNO = st.text_input("Phone Number (No Country Code):")
+                        st.info(f"Item: {row[0]}, Price: {row[1]}, Quantity: {item_qty[row[2]]}")
+                    for key, value in item_qty.items():
+                        for row in results:
+                            if key == row[2]:
+                                totalPrice += row[1] * value
+                    st.subheader(f"Total Price : ${totalPrice}")
+                    st.title("Enter Your Phone Number to continue...")
+                    pNO = st.text_input("Phone Number (No Country Code):")
+                except:
+                    st.error("Your cart is empty !")
                 if st.button("Pay"):
                     with st.spinner("Processing Payment..."):
                         try:
                             if self.db.cursor(f"SELECT * FROM Customer_Contact WHERE C_Contact = {pNO}") == []:
                                 # Add customer first
-                                addToCustomer = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({st.session_state.customerID}, 'GuestUser', 'GuestUser@gu.com');"""
+                                addToCustomer = f"""
+                                INSERT INTO Customer (CustomerID, C_Name, C_Email)
+                                SELECT {st.session_state.customerID}, 'GuestUser', 'GuestUser@gu.com'
+                                WHERE NOT EXISTS (
+                                    SELECT 1 FROM Customer WHERE CustomerID = {st.session_state.customerID}
+                                );
+                                """
                                 addToInvoice = f"""
                                     INSERT INTO Invoice (InvoiceID, Inv_Date, Total_Amount, CustomerID)
                                     VALUES (
@@ -384,9 +401,12 @@ class Interface:
                                 """
                                 # Execute the invoice insert
                                 self.db.cursor(addToCustomer)
-                                st.success(f"Customer Added !")
                                 self.db.cursor(addToInvoice)
                                 st.success(f"Payment Successful !")
+                                st.balloons()
+                                if st.button("Sign up for our exclusive offers !"):
+                                    st.query_params.update({"page": "login"})
+                                    self.login()
                             else:
                                 # add the data to proper invoice
                                 query = f"SELECT CustomerID FROM Customer_Contact WHERE C_Contact = {pNO}"
@@ -414,10 +434,8 @@ class Interface:
                                 st.success(f"Payment Successful! Thank you for shopping with us, Mr. {getCName[0][0]}")
 
                             st.session_state.cart.clear()
-                            with st.spinner("Initializing Interface..."):
-                                st.query_params.update({"page": "main"})
                         except Exception as e:
-                            st.error(f"Internal Error Occured ! Please Contact System Administrator !")
+                            st.error(f"Failed to load cart data...")
                 if st.button("Done"):
                     st.info("Press again to confirm...")
                     with st.spinner("Initializing Interface..."):
