@@ -1,6 +1,6 @@
 opencv-python==4.10.0.84
 pyzbar==0.1.9
-pyodbc==4.0.34
+pyodbc
 pandas==2.2.3
 streamlit==1.41.1
 streamlit-webrtc==0.47.9
