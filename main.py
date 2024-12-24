@@ -206,12 +206,12 @@ class Interface:
             with col3:
                 st.empty()
             with col4:
-                if st.button("Manual ->"):
+                if st.button("Manual Checkout ->"):
                     with st.spinner("Initializing Interface..."):
                         st.query_params.update({"page": "searchAndBuy"})
                         st.rerun()
             with col5:
-                if st.button("Automatic 𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃"):
+                if st.button("Automatic Checkout 𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃"):
                     st.toast("This functionality is available only in a local system !")
                     with st.spinner("Initializing Interface..."):
                         st.query_params.update({"page": "barcodeScanner"})
