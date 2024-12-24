@@ -1,0 +1,101 @@
+ProductID,P_Name,Price,P_Qty
+1,Apple,0.5,10
+2,Banana,1.0,20
+3,Carrot,1.5,30
+4,Potato,2.0,40
+5,Tomato,2.5,50
+6,Onion,3.0,60
+7,Lettuce,3.5,70
+8,Cucumber,4.0,80
+9,Milk,4.5,90
+10,Eggs,5.0,100
+11,Bread,5.5,110
+12,Rice,6.0,120
+13,Pasta,6.5,130
+14,Olive Oil,7.0,140
+15,Butter,7.5,150
+16,Cheese,8.0,160
+17,Chicken,8.5,170
+18,Beef,9.0,180
+19,Pork,9.5,190
+20,Salmon,10.0,200
+21,Lamb,10.5,210
+22,Sugar,11.0,220
+23,Salt,11.5,230
+24,Pepper,12.0,240
+25,Garlic,12.5,250
+26,Ginger,13.0,260
+27,Lemon,13.5,270
+28,Coriander,14.0,280
+29,Spinach,14.5,290
+30,Peas,15.0,300
+31,Broccoli,15.5,310
+32,Cauliflower,16.0,320
+33,Cabbage,16.5,330
+34,Zucchini,17.0,340
+35,Pumpkin,17.5,350
+36,Sweet Potato,18.0,360
+37,Squash,18.5,370
+38,Radish,19.0,380
+39,Bell Pepper,19.5,390
+40,Avocado,20.0,400
+41,Strawberries,20.5,410
+42,Blueberries,21.0,420
+43,Oranges,21.5,430
+44,Grapes,22.0,440
+45,Applesauce,22.5,450
+46,Tomato Sauce,23.0,460
+47,Yogurt,23.5,470
+48,Cream,24.0,480
+49,Cottage Cheese,24.5,490
+50,Mayonnaise,25.0,500
+51,Ketchup,25.5,510
+52,Mustard,26.0,520
+53,Pickles,26.5,530
+54,Relish,27.0,540
+55,Chili,27.5,550
+56,Chips,28.0,560
+57,Popcorn,28.5,570
+58,Cereal,29.0,580
+59,Granola,29.5,590
+60,Oats,30.0,600
+61,Flour,30.5,610
+62,Baking Powder,31.0,620
+63,Vanilla Extract,31.5,630
+64,Chocolate,32.0,640
+65,Coconut Oil,32.5,650
+66,Vinegar,33.0,660
+67,Honey,33.5,670
+68,Maple Syrup,34.0,680
+69,Canned Tuna,34.5,690
+70,Canned Beans,35.0,700
+71,Canned Tomatoes,35.5,710
+72,Canned Corn,36.0,720
+73,Canned Peas,36.5,730
+74,Frozen Vegetables,37.0,740
+75,Frozen Fruit,37.5,750
+76,Frozen Pizza,38.0,760
+77,Frozen Meatballs,38.5,770
+78,Frozen Fries,39.0,780
+79,Frozen Fish,39.5,790
+80,Ice Cream,40.0,800
+81,Cake Mix,40.5,810
+82,Cookies,41.0,820
+83,Candy,41.5,830
+84,Chocolate Bars,42.0,840
+85,Nuts,42.5,850
+86,Trail Mix,43.0,860
+87,Raisins,43.5,870
+88,Dried Apricots,44.0,880
+89,Peanut Butter,44.5,890
+90,Jam,45.0,900
+91,Jelly,45.5,910
+92,Rice Cakes,46.0,920
+93,Crackers,46.5,930
+94,Tea,47.0,940
+95,Coffee,47.5,950
+96,Juice,48.0,960
+97,Soda,48.5,970
+98,Sparkling Water,49.0,980
+99,Beer,49.5,990
+100,Wine,50.0,1000
