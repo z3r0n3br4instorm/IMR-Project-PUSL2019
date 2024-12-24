@@ -286,7 +286,7 @@ class Interface:
                         st.rerun()
 
             with st.spinner("Waiting for Database..."):
-                st.subheader("Prices")
+                st.subheader("Prices $")
                 inventory = self.db.cursor("SELECT P_Name, Price FROM Product")
                 self.displayBarChart(inventory)
 
