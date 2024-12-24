@@ -107,18 +107,19 @@ class Interface:
                                 break
                             else:
                                 pass
-                    if self.db.cursor(f"""SELECT * FROM Customer_Contact WHERE C_Contact = '{str(pno)}'""") == []:
-                        query = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({newID}, '{str(uname)}', '{str(email)}');"""
-                        query2 = f"""INSERT INTO Customer_Contact (CustomerID, C_Contact) VALUES ({newID}, '{str(pno)}');"""
-                        self.db.cursor(query)
-                        self.db.cursor(query2)
-                        st.success("User Saved!")
-                        st.session_state.customerID = newID
-                        st.query_params.update({"page": "main"})
-                        # Refresh
-                        self.mainScreen()
-                    else:
-                        st.error("User Already Exists !")
+                    with st.spinner("Communicating With Database Engine..."):
+                        if self.db.cursor(f"""SELECT * FROM Customer_Contact WHERE C_Contact = '{str(pno)}'""") == []:
+                            query = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({newID}, '{str(uname)}', '{str(email)}');"""
+                            query2 = f"""INSERT INTO Customer_Contact (CustomerID, C_Contact) VALUES ({newID}, '{str(pno)}');"""
+                            self.db.cursor(query)
+                            self.db.cursor(query2)
+                            st.success("User Saved!")
+                            st.session_state.customerID = newID
+                            st.query_params.update({"page": "main"})
+                            # Refresh
+                            self.mainScreen()
+                        else:
+                            st.error("User Already Exists !")
 
     def adminLogin(self):
         with self.placeholder.container():
