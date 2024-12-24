@@ -37,12 +37,12 @@ class Interface:
         if st.session_state.notqt:
             return None
         else:
-            st.title("💕 I.M.Y.C.T.E.E Interface 💕")
+            st.title("😉 I.M.Y.C.T.E.E Interface 😉")
             st.info("Username Keyword matched! IM Y CTEE")
             st.success("Welcome, O.Y.A.M.Q.T (Of course You Are My Cutiee)! 😘")
             st.write("This exclusive interface is for **my cutie only!** ")
 
-            st.subheader("✨ Special Features for Cutiee ✨")
+            st.subheader("😎 Special Features for Cutiee ✨")
             st.markdown("""
             - yap yap yap yap yap yap yap yap
             """)
