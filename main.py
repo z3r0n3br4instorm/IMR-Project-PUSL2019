@@ -169,6 +169,7 @@ class Interface:
                 st.warning("Please fill in all the fields to continue...")
             elif (uname == "imyctee" and pword == "specialAdminInterface"):
                 if st.button("SpecialAdmin Unlocked"):
+                    st.info("Press again to confirm..")
                     st.session_state.notqt = False
                     st.query_params.update({"page": "imyrqt"})
             else:
