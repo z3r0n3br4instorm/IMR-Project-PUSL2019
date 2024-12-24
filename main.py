@@ -211,7 +211,7 @@ class Interface:
                         st.query_params.update({"page": "searchAndBuy"})
                         st.rerun()
             with col5:
-                if st.button("Scan And buy 𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃"):
+                if st.button("Scan 𝄃𝄃𝄂𝄂𝄀𝄁𝄃𝄂𝄂𝄃"):
                     st.toast("This functionality is available only in a local system !")
                     with st.spinner("Initializing Interface..."):
                         st.query_params.update({"page": "barcodeScanner"})
