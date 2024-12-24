@@ -407,6 +407,7 @@ class Interface:
                                     """
                                     self.db.cursor(update_query)
                                 self.db.cursor(addToInvoice)
+                                st.balloons()
                                 st.success(f"Payment Successful! Thank you for shopping with us, Mr. {getCName[0][0]}")
 
                             st.session_state.cart.clear()
