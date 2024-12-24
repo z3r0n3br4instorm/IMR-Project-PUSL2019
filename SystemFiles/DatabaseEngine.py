@@ -1,6 +1,8 @@
 import pyodbc
 import csv
 from posix import close
+import threading
+import time
 
 class SystemDB:
     def __init__(self, server, database, username, password):
@@ -8,6 +10,8 @@ class SystemDB:
         self.database = database
         self.username = username
         self.password = password
+        refreshStockThread = threading.Thread(target=self.refreshStock)
+        refreshStockThread.start()
 
     def estConn(self):
         # Connection string
@@ -36,6 +40,31 @@ class SystemDB:
             result = "Success"
         conn.commit()
         conn.close()
+        return result
+
+    def refreshStock(self):
+        if True:
+            print("Refreshing Stock...")
+            try:
+                query = f"""
+                UPDATE Stock
+                SET St_Qty = (
+                    SELECT SUM(P_Qty)
+                    FROM Product
+                )
+                WHERE StockID = 1; -- Adjust the StockID or condition as needed
+                """
+                result = self.cursor(query)
+                print(result)
+            except Exception as e:
+                print(f"Error: {e}")
+
+    def adminFunctionsUpdateInventory(self, product_id, qty, supplierID):
+        query = f"""UPDATE Product SET P_Qty = P_Qty + {qty} WHERE ProductID = {product_id};"""
+        query2 = f"""UPDATE Supplier SET Sup_Qty = Sup_Qty + {qty} WHERE SupplierID = {supplierID};"""
+        result = self.cursor(query)
+        result2 = self.cursor(query2)
+        print(result, result2)
         return result
 
     def adminFunctionsCreateTables(self):

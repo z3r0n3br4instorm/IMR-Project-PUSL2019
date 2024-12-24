@@ -16,6 +16,8 @@ class Interface:
         self.placeholder = st.empty()
         self.db = SystemDB('54.169.119.236', 'POS', 'sa', '0_v1ru51234')
         self.notLoggedIn = True
+        if 'notqt' not in st.session_state:
+            st.session_state.notqt = True
         self.resetBar = False
         # Check if the genRandomNo in the database
         with st.spinner("Generating a Customer ID for You..."):
@@ -30,6 +32,28 @@ class Interface:
                         pass
         if 'cart' not in st.session_state:
             st.session_state.cart = []
+
+    def qtinterface(self):
+        if st.session_state.notqt:
+            return None
+        else:
+            st.title("💕 I.M.Y.C.T.E.E Interface 💕")
+            st.info("Username Keyword matched! IM Y CTEE")
+            st.success("Welcome, O.Y.A.M.Q.T (Of course You Are My Cutiee)! 😘")
+            st.write("This exclusive interface is for **my cutie only!** ")
+
+            st.subheader("✨ Special Features for Cutiee ✨")
+            st.markdown("""
+            - yap yap yap yap yap yap yap yap
+            """)
+
+            if st.button("Get a Compliment"):
+                st.balloons()
+                st.success("You’re the reason stars twinkle a little extra at night! ✨")
+
+            if st.button("Check this out"):
+                st.write("A gif for mah cutieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+                st.image("https://media.giphy.com/media/l0Exk8EUzSLsrErEQ/giphy.gif")
 
     def adminInterface(self):
         # Add spinning cogwheel emoji using HTML and CSS
@@ -53,11 +77,26 @@ class Interface:
             <h1>// Admin Dashboard <span class="spinning-emoji">⚙️</span></h1>
         """, unsafe_allow_html=True)
 
+
+
         st.markdown("---")
-        st.subheader("Database Tables:")
-        # Show All Tables inside a markdown table
-        tables = self.db.cursor("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'")
-        st.table(tables)
+        st.subheader("Inventory")
+        try:
+            product = st.number_input("Product ID:")
+            qty = st.number_input("Quantity:")
+            supplierID = st.number_input("Supplier ID:")
+        except:
+            st.error("Please enter a valid number.")
+        if st.button("Update Inventory"):
+            with st.spinner("Updating inventory..."):
+                self.db.adminFunctionsUpdateInventory(product, qty, supplierID)
+                st.success("Inventory updated successfully!")
+        self.displayBarChart(self.db.cursor("SELECT P_Name, P_Qty FROM Product"))
+        st.markdown("---")
+        st.markdown("> ### Supplier Table")
+        listTable = self.db.cursor("SELECT * FROM Supplier")
+        # markdown table
+        st.table(listTable)
         st.markdown("---")
         st.subheader("MSSQL Admin Shell:")
         query = st.text_area("Enter your SQL query here:")
@@ -128,6 +167,10 @@ class Interface:
             pword = st.text_input("Password", type="password", key="admin_password")
             if (uname == "" or pword == ""):
                 st.warning("Please fill in all the fields to continue...")
+            elif (uname == "imyctee" and pword == "specialAdminInterface"):
+                if st.button("SpecialAdmin Unlocked"):
+                    st.session_state.notqt = False
+                    st.query_params.update({"page": "imyrqt"})
             else:
                 if st.button("Login"):
                     # print(self.db.cursor(f"SELECT * FROM AdminUsers WHERE Username = '{uname}'"), uname, pword)
@@ -290,88 +333,90 @@ class Interface:
         cap.release()
 
     def paymentProcessor(self):
-        st.title("Payment Processor 💸")
-        totalPrice = 0
-        with st.spinner("Communicating with database..."):
-            cart_items = st.session_state.cart
-            if not cart_items:
-                st.error("Your cart is empty!")
-                return
+            st.title("Payment Processor 💸")
+            totalPrice = 0
+            with st.spinner("Communicating with database..."):
+                cart_items = st.session_state.cart
+                if not cart_items:
+                    st.error("Your cart is empty!")
+                    return
 
-            item_ids = ', '.join(map(str, cart_items))
-            item_qty = Counter(st.session_state.cart)
-            query = f"""
-            SELECT P_Name,Price, ProductID
-            FROM Product
-            WHERE ProductID IN ({item_ids})
-            """
+                item_ids = ', '.join(map(str, cart_items))
+                item_qty = Counter(st.session_state.cart)
+                query = f"""
+                SELECT P_Name, Price, ProductID, P_Qty
+                FROM Product
+                WHERE ProductID IN ({item_ids})
+                """
 
-            # Execute the query
-            results = self.db.cursor(query)
-            # Display results
-            st.subheader("Your cart items:")
-            print(item_qty)
-            for row in results:
-                st.info(f"Item: {row[0]}, Price: {row[1]}, Quantity: {item_qty[row[2]]}")
-            for key, value in item_qty.items():
+                # Execute the query
+                results = self.db.cursor(query)
+                # Display results
+                st.subheader("Your cart items:")
+                print(item_qty)
                 for row in results:
-                    if key == row[2]:
-                        totalPrice += row[1] * value
-            st.subheader(f"Total Price : ${totalPrice}")
-            st.title("Enter Your Phone Number to continue...")
-            pNO = st.text_input("Phone Number (No Country Code):")
-            if st.button("Pay"):
-                with st.spinner("Processing Payment..."):
-                    try:
-                        if self.db.cursor(f"SELECT * FROM Customer_Contact WHERE C_Contact = {pNO}") == []:
-                            # Add customer first
-                            addToCustomer = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({st.session_state.customerID}, 'GuestUser', 'GuestUser@gu.com');"""
-                            addToInvoice = f"""
-                                INSERT INTO Invoice (InvoiceID, Inv_Date, Total_Amount, CustomerID)
-                                VALUES (
-                                    (SELECT ISNULL(MAX(InvoiceID), 0) + 1 FROM Invoice),
-                                    GETDATE(),
-                                    {float(totalPrice)},
-                                    {st.session_state.customerID}
-                                );
-                            """
-                            # Execute the invoice insert (assuming you execute this query correctly here)
-                            # check if user's phone number exists in the database
-                            self.db.cursor(addToCustomer)
-                            st.success(f"Customer Added !")
-                            self.db.cursor(addToInvoice)
-                            st.success(f"Payment Successful !")
-                            st.session_state.cart.clear()
-                            with st.spinner("Initializing Interface..."):
-                                st.query_params.update({"page": "login"})
-                                self.login()
-                        else :
-                            # add the data to proper invoice
-                            # Get customerID
-                            query = f"SELECT CustomerID FROM Customer_Contact WHERE C_Contact = {pNO}"
-                            getNewId = self.db.cursor(query)
-                            getCName = self.db.cursor(f"SELECT C_Name FROM Customer WHERE CustomerID = {getNewId[0][0]}")
-                            st.session_state.customerID = getNewId[0][0]
-                            addToInvoice = f"""
-                                INSERT INTO Invoice (InvoiceID, Inv_Date, Total_Amount, CustomerID)
-                                VALUES (
-                                    (SELECT ISNULL(MAX(InvoiceID), 0) + 1 FROM Invoice),
-                                    GETDATE(),
-                                    {float(totalPrice)},
-                                    {st.session_state.customerID}
-                                );
-                            """
-                            self.db.cursor(addToInvoice)
-                            st.success(f"Payment Successful !, Thank you for shopping with us Mr. {getCName[0][0]}")
+                    st.info(f"Item: {row[0]}, Price: {row[1]}, Quantity: {item_qty[row[2]]}")
+                for key, value in item_qty.items():
+                    for row in results:
+                        if key == row[2]:
+                            totalPrice += row[1] * value
+                st.subheader(f"Total Price : ${totalPrice}")
+                st.title("Enter Your Phone Number to continue...")
+                pNO = st.text_input("Phone Number (No Country Code):")
+                if st.button("Pay"):
+                    with st.spinner("Processing Payment..."):
+                        try:
+                            if self.db.cursor(f"SELECT * FROM Customer_Contact WHERE C_Contact = {pNO}") == []:
+                                # Add customer first
+                                addToCustomer = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({st.session_state.customerID}, 'GuestUser', 'GuestUser@gu.com');"""
+                                addToInvoice = f"""
+                                    INSERT INTO Invoice (InvoiceID, Inv_Date, Total_Amount, CustomerID)
+                                    VALUES (
+                                        (SELECT ISNULL(MAX(InvoiceID), 0) + 1 FROM Invoice),
+                                        GETDATE(),
+                                        {float(totalPrice)},
+                                        {st.session_state.customerID}
+                                    );
+                                """
+                                # Execute the invoice insert
+                                self.db.cursor(addToCustomer)
+                                st.success(f"Customer Added !")
+                                self.db.cursor(addToInvoice)
+                                st.success(f"Payment Successful !")
+                            else:
+                                # add the data to proper invoice
+                                query = f"SELECT CustomerID FROM Customer_Contact WHERE C_Contact = {pNO}"
+                                getNewId = self.db.cursor(query)
+                                getCName = self.db.cursor(f"SELECT C_Name FROM Customer WHERE CustomerID = {getNewId[0][0]}")
+                                st.session_state.customerID = getNewId[0][0]
+                                addToInvoice = f"""
+                                    INSERT INTO Invoice (InvoiceID, Inv_Date, Total_Amount, CustomerID)
+                                    VALUES (
+                                        (SELECT ISNULL(MAX(InvoiceID), 0) + 1 FROM Invoice),
+                                        GETDATE(),
+                                        {float(totalPrice)},
+                                        {st.session_state.customerID}
+                                    );
+                                """
+                                for product_id, quantity in item_qty.items():
+                                    update_query = f"""
+                                    UPDATE Product
+                                    SET P_Qty = P_Qty - {quantity}
+                                    WHERE ProductID = {product_id} AND P_Qty >= {quantity}
+                                    """
+                                    self.db.cursor(update_query)
+                                self.db.cursor(addToInvoice)
+                                st.success(f"Payment Successful! Thank you for shopping with us, Mr. {getCName[0][0]}")
+
                             st.session_state.cart.clear()
                             with st.spinner("Initializing Interface..."):
                                 st.query_params.update({"page": "main"})
-                    except Exception as e:
-                        st.error(f"An error occurred: {e}")
-            if (st.button("Done")):
-                st.info("Press again to confirm...")
-                with st.spinner("Initializing Interface..."):
-                    st.query_params.update({"page": "main"})
+                        except Exception as e:
+                            st.error(f"An error occurred: {e}")
+                if st.button("Done"):
+                    st.info("Press again to confirm...")
+                    with st.spinner("Initializing Interface..."):
+                        st.query_params.update({"page": "main"})
 
 
     def route(self):
@@ -390,6 +435,8 @@ class Interface:
             self.adminInterface()
         elif page == "login":
             self.login()
+        elif page == "imyrqt":
+            self.qtinterface()
         else:
             st.error("Page not found!")
 
