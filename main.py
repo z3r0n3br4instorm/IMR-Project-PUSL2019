@@ -93,16 +93,27 @@ class Interface:
             email = st.text_input("Your Email", key="email")
             pno = st.text_input("Your Phone Number", key="phone")
             print(uname, email, pno)
+
             if (uname == "" or email == "" or pno == ""):
                 st.warning("Please fill in all the fields to continue...")
             else:
                 if st.button("Save User"):
+                    with st.spinner("Generating a New Customer ID for You..."):
+                        while True:
+                            genRandomNo = random.randint(100000,1000000)
+                            query = f"SELECT CustomerID FROM Customer WHERE CustomerID = {genRandomNo}"
+                            if self.db.cursor(query) == []:
+                                newID = genRandomNo
+                                break
+                            else:
+                                pass
                     if self.db.cursor(f"""SELECT * FROM Customer_Contact WHERE C_Contact = '{str(pno)}'""") == []:
-                        query = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({st.session_state.customerID}, '{str(uname)}', '{str(email)}');"""
-                        query2 = f"""INSERT INTO Customer_Contact (CustomerID, C_Contact) VALUES ({st.session_state.customerID}, '{str(pno)}');"""
+                        query = f"""INSERT INTO Customer (CustomerID, C_Name, C_Email) VALUES ({newID}, '{str(uname)}', '{str(email)}');"""
+                        query2 = f"""INSERT INTO Customer_Contact (CustomerID, C_Contact) VALUES ({newID}, '{str(pno)}');"""
                         self.db.cursor(query)
                         self.db.cursor(query2)
                         st.success("User Saved!")
+                        st.session_state.customerID = newID
                         st.query_params.update({"page": "main"})
                         # Refresh
                         self.mainScreen()
