@@ -34,28 +34,6 @@ class Interface:
         if 'cart' not in st.session_state:
             st.session_state.cart = []
 
-    def qtinterface(self):
-        if st.session_state.notqt:
-            return None
-        else:
-            st.title("😉 I.M.Y.C.T.E.E Interface 😉")
-            st.info("Username Keyword matched! IM Y CTEE")
-            st.success("Welcome, O.Y.A.M.Q.T (Of course You Are My Cutiee)! 😘")
-            st.write("This exclusive interface is for **my cutie only!** ")
-
-            st.subheader("😎 Special Features for Cutiee ✨")
-            st.markdown("""
-            - yap yap yap yap yap yap yap yap
-            """)
-
-            if st.button("Get a Compliment"):
-                st.balloons()
-                st.success("You’re the reason stars twinkle a little extra at night! ✨")
-
-            if st.button("Check this out"):
-                st.write("A gif for mah cutieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-                st.image("https://media.giphy.com/media/l0Exk8EUzSLsrErEQ/giphy.gif")
-
     def adminInterface(self):
         # Add spinning cogwheel emoji using HTML and CSS
         if st.session_state.customerID != 0:
@@ -171,11 +149,6 @@ class Interface:
             pword = st.text_input("Password", type="password", key="admin_password")
             if (uname == "" or pword == ""):
                 st.warning("Please fill in all the fields to continue...")
-            elif (uname == "imyctee" and pword == "specialAdminInterface"):
-                if st.button("SpecialAdmin Unlocked"):
-                    st.info("Press again to confirm..")
-                    st.session_state.notqt = False
-                    st.query_params.update({"page": "imyrqt"})
             else:
                 if st.button("Login"):
                     # print(self.db.cursor(f"SELECT * FROM AdminUsers WHERE Username = '{uname}'"), uname, pword)
